@@ -1,0 +1,104 @@
+.calendar-grid {
+  --gap: 1rem;
+  --line-color: #ff4e6b29;
+  --line-thickness: 1px;
+  --border-color: #ff4e6b;
+
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  position: relative;
+}
+
+.calendar-grid::before {
+  content: "";
+  position: absolute;
+  top: calc(-1 * var(--gap) / 2);
+  left: 0;
+  width: 100%;
+  height: var(--line-thickness);
+  background-color: var(--line-color);
+}
+
+.calendar-grid::after {
+  content: "";
+  position: absolute;
+  bottom: calc(-1 * var(--gap) / 2);
+  left: 0;
+  width: calc(100% + var(--gap));
+  height: var(--line-thickness);
+  background-color: var(--line-color);
+  transform: translateX(calc(-1 * var(--gap) / 2));
+}
+
+@media (min-width: 640px) {
+  .calendar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 850px) {
+  .calendar-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.calendar-grid__item {
+  position: relative;
+  border-left: var(--line-thickness) solid var(--line-color);
+  padding-left: 20px;
+}
+
+@media (min-width: 640px) and (max-width: 780px) {
+  .calendar-grid__item:nth-child(1),
+  .calendar-grid__item:nth-child(3),
+  .calendar-grid__item:nth-child(5) {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .calendar-grid__item:nth-child(1),
+  .calendar-grid__item:nth-child(4),
+  .calendar-grid__item:nth-child(7) {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+.calendar-grid__item::after {
+  content: "";
+  position: absolute;
+  height: var(--line-thickness);
+  width: calc(100% + var(--gap));
+  background-color: var(--line-color);
+  left: 0;
+  bottom: calc(-1 * var(--gap) / 2);
+  transform: translateX(calc(-1 * var(--gap) / 2));
+}
+
+@media (min-width: 768px) {
+  .calendar-grid > .calendar-grid__item:nth-last-child(-n + 3)::after {
+    display: none;
+  }
+}
+
+@media (min-width: 640px) and (max-width: 767px) {
+  .calendar-grid > .calendar-grid__item:nth-last-child(-n + 2)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .calendar-grid > .calendar-grid__item:nth-last-child(-n + 1)::after {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .calendar-grid__item {
+    border-left: none;
+    padding-left: 0;
+  }
+}
