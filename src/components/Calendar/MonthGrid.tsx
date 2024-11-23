@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useMemo } from "react";
 import {
   format,
   startOfMonth,
@@ -9,9 +9,6 @@ import {
   subDays,
   isSameDay,
 } from "date-fns";
-
-import EventModal from "./EventModal";
-import { Event, EventRefs } from "../../types/types";
 import { mockEvents } from "@/mocks/mockEvents";
 import { DAYS } from "@/constants/calendar";
 import EventsList from "./EventsList";
@@ -22,52 +19,18 @@ type Props = {
 };
 
 const MonthGrid = ({ month, selectedEventTypes }: Props) => {
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
-
   const monthStart = startOfMonth(month);
   const monthEnd = endOfMonth(month);
   const startDate = subDays(monthStart, monthStart.getDay());
   const endDate = addDays(monthEnd, 6 - monthEnd.getDay());
-  const daysToDisplay = eachDayOfInterval({ start: startDate, end: endDate });
+
+  const daysToDisplay = useMemo(
+    () => eachDayOfInterval({ start: startDate, end: endDate }),
+    [startDate, endDate]
+  );
 
   const getEventsForDay = (date: Date) => {
     return mockEvents.filter((event) => isSameDay(event.date, date));
-  };
-
-  const eventRefs = useRef<EventRefs>({});
-
-  const handleEventClick = (event: Event, ref: any) => {
-    setSelectedEvent(event);
-
-    if (ref?.current) {
-      const rect = ref.current.getBoundingClientRect();
-      const popupHeight = 300;
-      const popupWidth = 360;
-      const padding = 5;
-
-      let newTop = rect.bottom + window.scrollY + padding;
-      let newLeft = rect.left + window.scrollX;
-
-      const spaceBelow =
-        window.innerHeight - (rect.bottom + popupHeight + padding);
-      const spaceAbove = rect.top - popupHeight - padding;
-
-      if (spaceBelow < 0 && spaceAbove > 0) {
-        newTop = rect.top + window.scrollY - popupHeight - padding;
-      }
-
-      const spaceRight = window.innerWidth - (newLeft + popupWidth);
-      const spaceLeft = newLeft;
-
-      if (spaceRight < 0) {
-        newLeft = Math.max(window.innerWidth - popupWidth - padding, padding);
-      } else if (spaceLeft < 0) {
-        newLeft = padding;
-      }
-
-      setPopupPosition({ top: newTop, left: newLeft });
-    }
   };
 
   return (
@@ -96,26 +59,19 @@ const MonthGrid = ({ month, selectedEventTypes }: Props) => {
                 }`}
               >
                 <span className="text-sm">{format(day, "d")}</span>
-                <EventsList
-                  day={day}
-                  dayEvents={getEventsForDay(day)}
-                  selectedEventTypes={selectedEventTypes}
-                  handleEventClick={handleEventClick}
-                  eventRefs={eventRefs}
-                />
+
+                {isCurrentMonth && (
+                  <EventsList
+                    day={day}
+                    dayEvents={getEventsForDay(day)}
+                    selectedEventTypes={selectedEventTypes}
+                  />
+                )}
               </div>
             );
           })}
         </div>
       </div>
-
-      {selectedEvent && (
-        <EventModal
-          selectedEvent={selectedEvent}
-          setSelectedEvent={setSelectedEvent}
-          popupPosition={popupPosition}
-        />
-      )}
     </>
   );
 };

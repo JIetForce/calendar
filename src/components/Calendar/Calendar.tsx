@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { startOfMonth, addMonths, format } from "date-fns";
+import { startOfMonth, addMonths } from "date-fns";
 import MonthGrid from "./MonthGrid";
 import EventTypeFilter from "./EventTypeFilter";
 

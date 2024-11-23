@@ -91,8 +91,6 @@ export const mockEvents: Event[] = [
     location: "Stereo Plaza, Kyiv, Ukraine",
   },
 
-  //add more random date events for next 5 month
-
   {
     date: new Date(2024, 11, 3),
     type: "Meeting with an expert",

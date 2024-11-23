@@ -11,12 +11,16 @@ type EventModalProps = {
     top: number;
     left: number;
   };
+  popupRef: React.RefObject<HTMLDivElement>;
+  isHidden: boolean;
 };
 
 const EventModal = ({
   selectedEvent,
   setSelectedEvent,
   popupPosition,
+  popupRef,
+  isHidden,
 }: EventModalProps) => (
   <Dialog.Root
     open={!!selectedEvent}
@@ -24,12 +28,15 @@ const EventModal = ({
   >
     <Dialog.Portal>
       <Dialog.Content
+        ref={popupRef}
         style={{
           top: popupPosition.top,
           left: popupPosition.left,
           boxShadow: "0px 4px 16px 0px #00000066",
         }}
-        className="p-6 rounded-lg border-none outline-none bg-[#131315] w-[360px] h-[300px] absolute"
+        className={`p-6 rounded-lg border-none outline-none bg-[#131315] w-[360px] absolute ${
+          isHidden ? "opacity-0" : "opacity-100"
+        } transition-opacity duration-200 ease-in-out`}
       >
         <Dialog.Title className="text-[32px] leading-8 font-extralight border-b border-red-secondary pb-4">
           Event
@@ -37,7 +44,7 @@ const EventModal = ({
         <Dialog.Title className="text-xl leading-8 font-medium pt-4">
           {selectedEvent.type}
         </Dialog.Title>
-        <Dialog.Description className="mt-2 text-sm font-extralight max-h-16 h-16 overflow-scroll">
+        <Dialog.Description className="mt-2 text-sm font-extralight">
           {selectedEvent.description}
         </Dialog.Description>
         <p className="mt-4 text-gray-primary">
